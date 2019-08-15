@@ -1,5 +1,5 @@
 ---
-title: "Stroop Demo"
+title: "Drug efficacy"
 author: "Matthew Crump"
 output:
   html_document:

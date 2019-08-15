@@ -186,11 +186,13 @@ general_design <- general_design %>%
   mutate(stimulus = paste(premise_one,premise_two,sep=","))
 
 library(xprmntr)
-stimulus_json<-stimulus_df_to_json(general_design,
+stimulus_json <- stimulus_df_to_json(general_design,
                        stimulus= "stimulus",
                        data = c("premise_one","premise_two",
                                 "p1_outcome","p2_outcome",
                                 "p1_sentence","p2_sentence",
                                 "q1","q2","q3","q4"))
+
+
 
 
