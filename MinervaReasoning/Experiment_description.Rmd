@@ -1,0 +1,90 @@
+---
+title: "MinvervaReasoning Experiment description"
+author: "Matt Crump"
+date: "8/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## General overview and goals
+
+Briefly, we are testing an instance theory account of causal reasoning, modeling judgments about potential causes between objects and outcomes in terms of instance-based representations in Minerva 2.
+
+## The initial sketch for this experiment
+
+NOTE: this basic idea section is copied from Randy's notes about the experiment
+
+### Experiment 1: Two premise questions
+
+**Instructions:** You will read the outcomes of drug trials and then judge drug efficacies
+
+**Example trial:**
+
+Show Premise(s):
+
+1.  People who took Activil were cured
+2.  People who took a combination of Activil and Boraxacet were cured
+
+note: premises presented in succession (in specified order)
+
+Ask Question(s):
+
+1. How well does Activil work?
+2. How well does Boraxacet work?
+3. How well does the combination of Activil and Boraxacet work?
+
+Initial considerations:
+
+- The questions are presented one at a time, in random order
+- Ratings are given on a slider [-100, +100], where -100 means inhibits the outcome, 0 means orthogonal to the outcome, and +100 means causes the outcome
+
+### Experimental design:
+
+There are 22 distinct trials, inclusive of order counterbalancing.
+
+<div class = "row">
+  
+<div class = "col-md-4">
+
+Experimental questions (8):
+
++ A+, AB+ 
++ A+, AB- 
++ A-, AB+ 
++ A-, AB- 
++ AB+, A+ 
++ AB+, A- 
++ AB-, A+ 
++ A-, AB-
+
+
+</div>
+  
+<div class = "col-md-4">
+
+Control questions (14):
+
++ A+
++ A-
++ AB+ AB-
++ C+
++ C-
++ C+, AB+ 
++ C+, AB- 
++ C-, AB+ 
++ C-, AB- 
++ AB+, C+ 
++ AB+, C- 
++ AB-, C+ 
++ AB-, C-
+
+</div>
+</div>
+  
+
+
+
+
