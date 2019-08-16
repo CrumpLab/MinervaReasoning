@@ -1,12 +1,12 @@
 ---
 title: "MinvervaReasoning Experiment description"
-author: "Matt Crump"
+author: ["Matt Crump","Randy Jamieson"]
 date: "8/16/2019"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 ## General overview and goals
@@ -83,6 +83,95 @@ Control questions (14):
 
 </div>
 </div>
+
+## Stimuli: Fake drugs
+
+Initially we plan to test inferences about the above premises as independently from one an another as we can. This may not be practicaly feasible in humans, but it is certainly something we can ask the model to do. 
+
+To accomplish independence, we would like the stimuli assigned to the A, B, and C premises to have unique names. This was accomplished by finding a [list]() of 40 popular drug names. Splitting each of the names in half so that the beginnings and endings could be recombined to form a large set of unique drug names. The code that we use to do this is in the `index.Rmd` file, and reproduced here:
+
+```{r}
+# Drug name generator
+
+library(tidyverse)
+
+# 40 common drug names, with the beginings and endings split
+
+drugs <- data.frame(stringsAsFactors=FALSE,
+    Original = c("Acetaminophen", "Adderall", "Alprazolam", "Amitriptyline",
+                 "Amlodipine", "Amoxicillin", "Ativan", "Atorvastatin",
+                 "Azithromycin", "Ciprofloxacin", "Citalopram", "Clindamycin",
+                 "Clonazepam", "Codeine", "Cyclobenzaprine", "Cymbalta", "Doxycycline",
+                 "Gabapentin", "Hydrochlorothiazide", "Ibuprofen", "Lexapro",
+                 "Lisinopril", "Loratadine", "Lorazepam", "Losartan", "Lyrica",
+                 "Meloxicam", "Metformin", "Metoprolol", "Naproxen", "Omeprazole",
+                 "Oxycodone", "Pantoprazole", "Prednisone", "Tramadol", "Trazodone",
+                 "Viagra", "Wellbutrin", "Xanax", "Zoloft"),
+       First = c("Aceta", "Adde", "Alpra", "Amitri", "Amlo", "Amoxi", "Ati",
+                 "Atorva", "Azithro", "Cipro", "Citalo", "Clinda", "Clona",
+                 "Co", "Cyclo", "Cym", "Doxy", "Gaba", "Hydro", "Ibu", "Lexa",
+                 "Lisino", "Lorata", "Loraze", "Losa", "Lyri", "Melo", "Metfo",
+                 "Meto", "Napro", "Ome", "Oxy", "Panto", "Predni", "Trama", "Trazo",
+                 "Via", "Wellbu", "Xa", "Zo"),
+        Last = c("minophen", "rall", "zolam", "ptyline", "dipine", "cillin",
+                 "van", "statin", "mycin", "floxacin", "pram", "mycin",
+                 "zepam", "deine", "benzaprine", "balta", "cycline", "pentin",
+                 "thiazide", "profen", "pro", "pril", "dine", "pam", "tan", "ca", "xicam",
+                 "rmin", "prolol", "xen", "prazole", "codone", "prazole",
+                 "sone", "dol", "done", "gra", "trin", "nax", "loft")
+)
+
+
+# create new drug names by recombining first and last parts, take only new and unique combinations
+
+new_first <- rep(drugs$First,40)
+new_last <- rep(drugs$Last, each=40)
+new_drugs <- paste(new_first,new_last, sep="")
+new_drugs <- new_drugs[new_drugs %in% drugs$Original == FALSE]
+new_drugs <- unique(new_drugs)
+
+# sample enough unique drug names to cover the experiment
+sample_drugs <- sample(new_drugs, 22*3)
+
+# print the first 20 of 66
+print(sample_drugs[1:20])
+```
+
+This scheme generates `r length(new_drugs)` novel and unique drug names. Which allows us to present each subject with a set of randomly generated drug names that will be entirely unique for each subject, and mostly not overlap with the sets of drug names assigned across subjects. 
+
+**Design Decision:** There are several ways to control the presentation of drug names. One random set could be generated and used for all subjects. A limited number of nonoverlapping sets could be generated and counterbalanced across subjects. A random set could be generated for each subject. My sense is that the set accomplishes the control we seek, and it is straightforward to implement. The downsides to random generation, which potentially could include added noise in the experiment, seem to outweigh the downsides to counterbalancing, which could include systematic bias from whatever idiosyncracies particular sets may have. So, I suppose for now, **the decision is to randomize stimulus sets** for each subject.
+
+## Procedure
+
+The general procedure involves single trials containing a premise phase and an inference phase. Each phase may contain any number of premises, and any number of inferences. Typically, the number of inferences would correspond directly to the number of unique drugs or combinations of drugs.
+
+From the outset it is clear there are many options to control the exact presentation of premises and inferences. 
+
+1. All premises displayed simulatenously for X ms, or until a button press, or timeout
+2. Sequential display for X ms
+3. All premises displayed simultaneously and all inference questions displayed simulateonously
+4. 1 or 2, and the inferences displayed sequentially, or simultaneously
+
+Some of these decision might matter, and could be manipulated across variations of the main experiment. However, it would be best if the decision to conduct these manipulations was guided by testing theoretical predictions derived from the Model. 
+
+My own two cents after having developed the task so far was that sequential presentations of the premises was mildly taxing. I really had to pay attention to remember the even the names of the drugs, let alone their outcomes; and I often found myself forgetting what had happened when answering the inference questions. This "problems" could easily be a useful feature of the design as well. It may be that how people make inferences in this task greatly depends on whether they are rememebering the premises, or inspecting and perhaps more actively "reasoning" about them given a concurrent presentation. TBH, I don't have a strong rationale for deciding how to start this experiment.
+
+**Design decision:** My fuzzy intuition suggest that the premises be displayed on screen for say 5 seconds (enough to comfortably read them), they would remain on screen for the duration of the trial, and following the initial premise-only presentation, the inference questions, along with sliders, would be answered sequentially, each being replaced with the next one until the end. Here, we can assume there won't be much noise from failing to remember what the drug/efficacy outcomes. And, we might minimize cross-talk between inferences by asking each question one at a time.
+
+## Randomization
+
+Notes on what is getting randomized etc.
+
+1. Currently, each time the experiment is knit, new drug names are randomly created and assigned to the ABC stimuli. This is done in R, not in js, and this would need to be changed (done in js) to keep full randomization for running online.
+
+2. The global order of the trials is fully randomized by jsPsych, and every subject should receive a random trial order whenever the html is reloaded.
+
+3. The order of inference questions is **not yet randomized**, mainly owing to the way I used jsPsych to achieve differing numbers of inference questions within each trial. I suppose my first step will be to implement randomization in R.
+
+
+
+
+
   
 
 

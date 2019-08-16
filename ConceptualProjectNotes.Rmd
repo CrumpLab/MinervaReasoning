@@ -1,0 +1,85 @@
+---
+title: "Conceptual project notes"
+author: ["Matt Crump","Randy Jamieson"]
+date: "8/16/2019"
+bibliography: ["MINERVATheory.bib"]
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Preface
+
+To preface some of the concepts that are motivating this work, it is worth pointing to Richard Semon's Mnemic Psychology [-@semonMnemicPsychologyDuffy1923], and his ideas about mechanisms of memory, specifically as they relate to the concepts of association and similarity. The following is verbatim quoted from @schacterRichardSemonTheory1978 who described several ways in which Semon's, seemingly long-lost ideas, mapped very closely on to modern memory theory.
+
+---
+
+"Contiguity vs Similarity and the Engraphic Role of Ecphory
+
+One of Semon's most striking and innovative applications of redintegrative ecphory to a problem of memory concerned the question of association by contiguity vs association by similarity. This problem has a long history in psychology and philosophy, with some authors arguing that all association is by similarity, others that all association is developed through contiguity, which in itself was nothing new; but his manner of reaching the conclusion was quite interesting, and merits close attention for two reasons. 
+
+First, it again highlights the important role of retrieval processes in Semon's theory; second, it brings to light an important distinction that was largely overlooked at the time.
+
+In order to account for apparent association by similarity (that is, the case in which Stimulus X evokes a semantically, visually, acoustically, etc., similar Memory Trace Y) Semon invoked his principle of partial return. Owing to shared components between Stimulus X and Trace Y, Y is ecphorized in the presence of X, just like in any other ecphory via partial return. It is only at this point that the two events are associated, through contiguity, and the new engram-complex is then stored. Thus Semon argued that association by similarity is due to:
+
+"... an ecphory based on the partial recurrence of certain components of an excitation-complex. When departing, it leaves behind a new engram-complex in which the two images are associated, but this consecutive association is a typical simultaneous association (1923, p. 189).
+Semon went on to state that, "In fact 'associ- ation' through resemblance does not exist. What is taken for it is ecphory due to the partial return of a complex which has previously left its engram" (1923, p. 189).
+
+There are two critical points to be extracted from this analysis. First, it led Semon to make an important distinction between ecphory and association. Association can be revealed through ecphory, but it cannot be equated with the process of ecphory. Here Semon was challenging the common assumption of his era that association is the mechanism of recall. Semon rejected this notion, preferring to think of association as a descriptive concept which should be logically distinguished from the mechanism of retrieval. By disentangling these two concepts, Semon was able to offer a novel analysis of as- sociation by similarity: "... the essential gain from our investigation is that the notion of association through likeness was based on a confusion of two concepts: association and ecphory" (p. 189). Semon's analysis is closer in spirit to modern conceptions such as encoding specificity (Tulving & Thomson, 1973) than to the theories of his time."
+
+---
+
+## An instance theory of inferential "reasoning"
+
+The theoretical aims of this project are to evaluate an instance theory approach to understanding aspects of reasoning, such as inferential reasoning, and abductive reasoning. The analysis seeks to explain inference and abduction by the processing mechanisms of instance theory. Given the above preface, these claims amount to an investigation of the extent to which inference/abduction can be explained in terms of contiguity- and resonance-based encoding and retrieval processes. 
+
+We use Hintzman's [-@hintzmanMINERVASimulationModel1984;@hintzmanSchemaAbstractionMultipletrace1986;@hintzmanJudgmentsFrequencyRecognition1988] MINERVA 2 multi-trace model of memory; which can easily be viewed as a formal implementation of Semon's core notions. The model is contiguity based in that instances of experience are represented as wholistic engram-complexes. This is accomplished by describing the features inherent to an instance in terms of a multi-dimensional feature vector [1s = feature present, 0s = feature unknown, -1s = feature absent]. The model assumes multiple traces, and new instances are entered into a memory matrix as a new row entry. The model assumes resonance-based retrieval. Probes, or the feature vector represented a current experience, are allowed to resonate with all instances in memory. This is implemented formally by measuring the cosine similarity between the probe and all memory traces in parallel. The resonance process produces a memorial response (ecphory), in the form of an echo. The echo is the similarity weighted sum of all traces in memory. Each trace is muiltiplied by its similarity to the probe, the weighted traces are then summed to produce an echo. 
+
+This process thus results in a particular kind of resonance based retrieval machine that becomes sensitive to associative structure inherent to the traces that it experiences. There are no formal associative bonds. Nevertheless, it accomplishes tasks that involve associations. For example, MINERVA 2 models cued-recall, whereby the presentation of cue A, that was previously paired with a second cue B (orirginal pair AB), can retrieve the AB trace by virtue of the fact that a single A cue is partially similar to the trace containing the AB pair. 
+
+More recently, @jamiesonInstanceTheorySemantic2018 extended MINERVA 2, and showed that MINERVA-AL, which involved a modified encoding rule, could explain a wide variety of associative learning phenomena using the same contiguity and resonance based retrieval mechanisms.
+
+## Contiguity and resonance based inference
+
+In this project we evaluate the problem of inference from the perspective of a contiguity and resonance based retrieval mechanism. People often make inferences on the basis of available information. For example, a person could be presented with two premises:
+
+1. People who took Advil were not cured
+2. People who took Advil and Modafinil were cured
+
+What kinds of inferences can be made about the following questions?
+
+1. How well does Advil work?
+2. How well does Modafinil?
+3. How well does the combination of Advil and Modafinil work?
+
+Obviously, given these premises there is much information missing to make strong inferences. However, we might say that Advil alone does not work, because that is one of the premises. We might infer that Modafinil does work, because we seem to already know that Advil does not. Or we might say that Modafinil doesn't work by itself, it needs to be combined with Advil, and something special about that combination does the work.
+
+These kinds of simple premises and questions can be translated into MINERVA as feature vectors. This allows us to ask what kinds of inferences MINERVA makes about these situations. 
+
+For example, premise 1 can be represented as a vector with the following fields:
+
+[Drug 1 = Advil, Drug 2 = NA, Outcome = Not Cured]
+
+Premise 2 is:
+
+[Drug 1 = Advil, Drug 2 = Modafinil, Outcome = Cured]
+
+Inferences about the efficacy of Drug 1 or 2, of their combination can then be made by asking MINERVA a question in the form of a probe:
+
+[Drug 1 = Advil, Drug 2 = NA, Outcome = NA]
+
+Submitting this as a probe to MINERVA, will result in an echo, which will contain featural information in each of the fields that can be inspected to determine MINERVA's inference. For example, given the above probe, the echo will contain a features in the Outcome field that are more or less similar to "Cured" or "Not Cured".
+
+[Drug 1 = 'Advil' Drug 2 = 'echo', Outcome = 'Cured/Not Cured']
+
+## Asking all the questions
+
+So, in this way we can place any set of premises into MINERVA's memory, and then ask any set of questions to measure the inferences that MIENRVA would make based on contiguity and resonance. The theoretical analysis is independent from what people do, however it can be compared with the inferences that people generate for the same questions. In this way, it is possible to compare human inference with inferences made by a contiguity and resonance-based retrieval process. The question is whether the instance theory has any mileage at all in explaining the pattern of inferences that people, and possibly other animals (given related comparative procedures presenting information in a similar manner) generate for these situations.
+
+## Limitations and layers
+
+This analysis is not intended to deny any role for higher-level reasoning abilities. Instead, in our theory, instance-based processes is viewed a core layer of cognition that may capable of many forms of inference in its own right. The investigation is an attempt to delineate how that layers works, and what it does given assumptions about how it works. 
+
+## References
