@@ -1,0 +1,257 @@
+---
+title: "MinvervaReasoningB Experiment description"
+author: ["Matt Crump","Randy Jamieson"]
+date: "8/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## NEW
+
+Premises are presented simultaneously and concurrently with questions.
+
+To do:
+
+1. The vertical arrangement of premises and questions changes depending on how many lines are written. It would be nice to have these presentations appear without moving location.
+
+## Running the Experiment
+
+**Overview**:: The code in this repo produces an html based experiment (index.html) located in the experiment folder. This html file can be run in a browser to run the experiment. In order to have the data saved locally, the html file must be run using an http protocol. This is achieved using plumber in R-studio. The following steps should allow the experiment to be run.  
+
+1. download a copy of this repo [https://github.com/CrumpLab/MinervaReasoning](https://github.com/CrumpLab/MinervaReasoning)
+
+2. Software requirements and package dependencies. 
+
+  a. Software: R and R-studio
+  b. R packages: jsonlite, htmltools, tidyverse, plumber, rmarkdown, devtools (most should be already be installed)
+  c. Custom R packages: This experiment relies on my forked copy of the in development xprmntr package, which can be installed from this github repo using the devtools package.
+  
+```{r, eval=FALSE} 
+# install.packages("devtools")
+devtools::install_github("CrumpLab/xprmntr")
+```
+
+  d. open the .Rproj file "MinervaReasoning.Rproj" to load the project in R-studio
+  e. open the "run.R" file (in the MinervaReasoning folder), and run the code, the experiment should open up in a browser window.
+  
+
+## General overview and goals
+
+Briefly, we are testing an instance theory account of causal reasoning, modeling judgments about potential causes between objects and outcomes in terms of instance-based representations in Minerva 2.
+
+## The initial sketch for this experiment
+
+NOTE: this basic idea section is copied from Randy's notes about the experiment
+
+### Experiment 1: Two premise questions
+
+**Instructions:** You will read the outcomes of drug trials and then judge drug efficacies
+
+**Example trial:**
+
+Show Premise(s):
+
+1.  People who took Activil were cured
+2.  People who took a combination of Activil and Boraxacet were cured
+
+note: premises presented in succession (in specified order)
+
+Ask Question(s):
+
+1. How well does Activil work?
+2. How well does Boraxacet work?
+3. How well does the combination of Activil and Boraxacet work?
+
+Initial considerations:
+
+- The questions are presented one at a time, in random order
+- Ratings are given on a slider [-100, +100], where -100 means inhibits the outcome, 0 means orthogonal to the outcome, and +100 means causes the outcome
+
+### Experimental design:
+
+There are 22 distinct trials, inclusive of order counterbalancing.
+
+<div class = "row">
+  
+<div class = "col-md-4">
+
+Experimental questions (8):
+
++ A+, AB+ 
++ A+, AB- 
++ A-, AB+ 
++ A-, AB- 
++ AB+, A+ 
++ AB+, A- 
++ AB-, A+ 
++ A-, AB-
+
+
+</div>
+  
+<div class = "col-md-4">
+
+Control questions (14):
+
++ A+
++ A-
++ AB+ AB-
++ C+
++ C-
++ C+, AB+ 
++ C+, AB- 
++ C-, AB+ 
++ C-, AB- 
++ AB+, C+ 
++ AB+, C- 
++ AB-, C+ 
++ AB-, C-
+
+</div>
+</div>
+
+## Stimuli: Fake drugs
+
+Initially we plan to test inferences about the above premises as independently from one an another as we can. This may not be practicaly feasible in humans, but it is certainly something we can ask the model to do. 
+
+To accomplish independence, we would like the stimuli assigned to the A, B, and C premises to have unique names. This was accomplished by finding a [list]() of 40 popular drug names. Splitting each of the names in half so that the beginnings and endings could be recombined to form a large set of unique drug names. The code that we use to do this is in the `index.Rmd` file, and reproduced here:
+
+```{r}
+# Drug name generator
+
+library(tidyverse)
+
+# 40 common drug names, with the beginings and endings split
+
+drugs <- data.frame(stringsAsFactors=FALSE,
+    Original = c("Acetaminophen", "Adderall", "Alprazolam", "Amitriptyline",
+                 "Amlodipine", "Amoxicillin", "Ativan", "Atorvastatin",
+                 "Azithromycin", "Ciprofloxacin", "Citalopram", "Clindamycin",
+                 "Clonazepam", "Codeine", "Cyclobenzaprine", "Cymbalta", "Doxycycline",
+                 "Gabapentin", "Hydrochlorothiazide", "Ibuprofen", "Lexapro",
+                 "Lisinopril", "Loratadine", "Lorazepam", "Losartan", "Lyrica",
+                 "Meloxicam", "Metformin", "Metoprolol", "Naproxen", "Omeprazole",
+                 "Oxycodone", "Pantoprazole", "Prednisone", "Tramadol", "Trazodone",
+                 "Viagra", "Wellbutrin", "Xanax", "Zoloft"),
+       First = c("Aceta", "Adde", "Alpra", "Amitri", "Amlo", "Amoxi", "Ati",
+                 "Atorva", "Azithro", "Cipro", "Citalo", "Clinda", "Clona",
+                 "Co", "Cyclo", "Cym", "Doxy", "Gaba", "Hydro", "Ibu", "Lexa",
+                 "Lisino", "Lorata", "Loraze", "Losa", "Lyri", "Melo", "Metfo",
+                 "Meto", "Napro", "Ome", "Oxy", "Panto", "Predni", "Trama", "Trazo",
+                 "Via", "Wellbu", "Xa", "Zo"),
+        Last = c("minophen", "rall", "zolam", "ptyline", "dipine", "cillin",
+                 "van", "statin", "mycin", "floxacin", "pram", "mycin",
+                 "zepam", "deine", "benzaprine", "balta", "cycline", "pentin",
+                 "thiazide", "profen", "pro", "pril", "dine", "pam", "tan", "ca", "xicam",
+                 "rmin", "prolol", "xen", "prazole", "codone", "prazole",
+                 "sone", "dol", "done", "gra", "trin", "nax", "loft")
+)
+
+
+# create new drug names by recombining first and last parts, take only new and unique combinations
+
+new_first <- rep(drugs$First,40)
+new_last <- rep(drugs$Last, each=40)
+new_drugs <- paste(new_first,new_last, sep="")
+new_drugs <- new_drugs[new_drugs %in% drugs$Original == FALSE]
+new_drugs <- unique(new_drugs)
+
+# sample enough unique drug names to cover the experiment
+sample_drugs <- sample(new_drugs, 22*3)
+
+# print the first 20 of 66
+print(sample_drugs[1:20])
+```
+
+This scheme generates `r length(new_drugs)` novel and unique drug names. Which allows us to present each subject with a set of randomly generated drug names that will be entirely unique for each subject, and mostly not overlap with the sets of drug names assigned across subjects. 
+
+**Design Decision:** There are several ways to control the presentation of drug names. One random set could be generated and used for all subjects. A limited number of nonoverlapping sets could be generated and counterbalanced across subjects. A random set could be generated for each subject. My sense is that the set accomplishes the control we seek, and it is straightforward to implement. The downsides to random generation, which potentially could include added noise in the experiment, seem to outweigh the downsides to counterbalancing, which could include systematic bias from whatever idiosyncracies particular sets may have. So, I suppose for now, **the decision is to randomize stimulus sets** for each subject.
+
+## Procedure
+
+The general procedure involves single trials containing a premise phase and an inference phase. Each phase may contain any number of premises, and any number of inferences. Typically, the number of inferences would correspond directly to the number of unique drugs or combinations of drugs.
+
+From the outset it is clear there are many options to control the exact presentation of premises and inferences. 
+
+1. All premises displayed simulatenously for X ms, or until a button press, or timeout
+2. Sequential display for X ms
+3. **All premises displayed simultaneously and all inference questions displayed simulateonously**
+4. 1 or 2, and the inferences displayed sequentially, or simultaneously
+
+Some of these decision might matter, and could be manipulated across variations of the main experiment. However, it would be best if the decision to conduct these manipulations was guided by testing theoretical predictions derived from the Model. 
+
+My own two cents after having developed the task so far was that sequential presentations of the premises was mildly taxing. I really had to pay attention to remember the even the names of the drugs, let alone their outcomes; and I often found myself forgetting what had happened when answering the inference questions. This "problems" could easily be a useful feature of the design as well. It may be that how people make inferences in this task greatly depends on whether they are rememebering the premises, or inspecting and perhaps more actively "reasoning" about them given a concurrent presentation. TBH, I don't have a strong rationale for deciding how to start this experiment.
+
+**Design decision:** My fuzzy intuition suggest that the premises be displayed on screen for say 5 seconds (enough to comfortably read them), they would remain on screen for the duration of the trial, and following the initial premise-only presentation, the inference questions, along with sliders, would be answered sequentially, each being replaced with the next one until the end. Here, we can assume there won't be much noise from failing to remember what the drug/efficacy outcomes. And, we might minimize cross-talk between inferences by asking each question one at a time.
+
+## Randomization
+
+Notes on what is getting randomized etc.
+
+1. Currently, each time the experiment is knit, new drug names are randomly created and assigned to the ABC stimuli. This is done in R, not in js, and this would need to be changed (done in js) to keep full randomization for running online.
+
+2. The global order of the trials is fully randomized by jsPsych, and every subject should receive a random trial order whenever the html is reloaded.
+
+3. The order of inference questions is randomized in R. 
+
+## to do list
+
+1. save locally **done**
+2. end of experiment message **done**
+
+  - Currently the debrief message requires 2 debrief calls to be added to the timeline, rather than 1. For some reason, the first debrief is skipped (or probably run automatically and not rendered) for some reason. In this situation, the data is not saved until after the debrief screen is responded to by a keyboard button press. It would be nicer to have the data save screen display a message.
+  - Solved, added the save data function to the debrief screen. Discovered that the finish trial function was redundant with setting trial duration to 0, which must have fired finish trial to complete the first debrief screen.
+  
+3. randomize drug efficacy questions order **done**
+
+4. timeout for slider answer...
+
+ - currently set to 10 seconds, on timeout a null value is entered for the slider response, RT is NA
+ - skipped questions (where the question is null)
+ 
+## Analysis
+
+A first pass at determining whether the data can be analyzed
+
+```{r}
+library(data.table)
+
+# load in one subject pilot data
+
+all_data <- fread("data/data_2019-09-03-14-55-13_mfiv6k4jb5.csv")
+
+filter_data <- all_data %>%
+  filter(trial_type == "html-slider-response", # get response rows
+         stimulus != "<p>null</p>") %>% # eliminate null questions
+  group_by(trial_number) %>%
+  mutate(num_questions = max(n())) %>% # get number of questions asked 
+  ungroup() %>%
+  mutate(q_id = case_when(question_order == "q1" ~ q1_type, # extract question asked on each trial
+                          question_order == "q2" ~ q2_type,
+                          question_order == "q3" ~ q3_type,
+                          question_order == "q4" ~ q4_type),
+         response = as.numeric(response)) %>%  # convert response from character to numeric
+  mutate(q_label = case_when(q_id == 1 ~ "A", # create question labels (A,B,AB,C)
+                             q_id == 2 ~ "B",
+                             q_id == 3 ~ "AB",
+                             q_id == 4 ~ "C")) %>%
+  group_by(overall_premise,q_label) %>%
+  summarise(mean_effectiveness = mean(response))
+
+```
+
+
+
+
+
+
+
+
+  
+
+
+
+
