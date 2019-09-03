@@ -383,6 +383,25 @@ $(document).ready(function () {
 </div>
 
 
+<div id="running-the-experiment" class="section level2">
+<h2>Running the Experiment</h2>
+<p><strong>Overview</strong>:: The code in this repo produces an html based experiment (index.html) located in the experiment folder. This html file can be run in a browser to run the experiment. In order to have the data saved locally, the html file must be run using an http protocol. This is achieved using plumber in R-studio. The following steps should allow the experiment to be run.</p>
+<ol style="list-style-type: decimal">
+<li><p>download a copy of this repo <a href="https://github.com/CrumpLab/MinervaReasoning">https://github.com/CrumpLab/MinervaReasoning</a></p></li>
+<li><p>Software requirements and package dependencies.</p></li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li>Software: R and R-studio</li>
+<li>R packages: htmltools, tidyverse, plumber, rmarkdown, devtools (most should be already be installed)</li>
+<li>Custom R packages: This experiment relies on my forked copy of the in development xprmntr package, which can be installed from this github repo using the devtools package.</li>
+</ol>
+<pre class="r"><code># install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;CrumpLab/xprmntr&quot;)</code></pre>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>open the .Rproj file “MinervaReasoning.Rproj” to load the project in R-studio</li>
+<li>open the “run.R” file (in the MinervaReasoning folder), and run the code, the experiment should open up in a browser window.</li>
+</ol>
+</div>
 <div id="general-overview-and-goals" class="section level2">
 <h2>General overview and goals</h2>
 <p>Briefly, we are testing an instance theory account of causal reasoning, modeling judgments about potential causes between objects and outcomes in terms of instance-based representations in Minerva 2.</p>
@@ -498,11 +517,11 @@ sample_drugs &lt;- sample(new_drugs, 22*3)
 
 # print the first 20 of 66
 print(sample_drugs[1:20])</code></pre>
-<pre><code>##  [1] &quot;Clonadol&quot;      &quot;Metopam&quot;       &quot;Gabasone&quot;      &quot;Alpranax&quot;     
-##  [5] &quot;Acetasone&quot;     &quot;Ibuminophen&quot;   &quot;Ibuprolol&quot;     &quot;Cymmycin&quot;     
-##  [9] &quot;Naprominophen&quot; &quot;Azithronax&quot;    &quot;Amoxizolam&quot;    &quot;Clindanax&quot;    
-## [13] &quot;Melonax&quot;       &quot;Amoxirall&quot;     &quot;Cyclopram&quot;     &quot;Zofloxacin&quot;   
-## [17] &quot;Alpraptyline&quot;  &quot;Cymthiazide&quot;   &quot;Cymbenzaprine&quot; &quot;Amitricycline&quot;</code></pre>
+<pre><code>##  [1] &quot;Amloprofen&quot;    &quot;Trazosone&quot;     &quot;Viathiazide&quot;   &quot;Wellbudine&quot;   
+##  [5] &quot;Gabathiazide&quot;  &quot;Wellbugra&quot;     &quot;Clonapentin&quot;   &quot;Losaprazole&quot;  
+##  [9] &quot;Atiprazole&quot;    &quot;Wellbuprazole&quot; &quot;Prednirmin&quot;    &quot;Lexaprofen&quot;   
+## [13] &quot;Napropro&quot;      &quot;Acetadipine&quot;   &quot;Oxydipine&quot;     &quot;Losadeine&quot;    
+## [17] &quot;Naprofloxacin&quot; &quot;Cycloptyline&quot;  &quot;Omepentin&quot;     &quot;Amitrizolam&quot;</code></pre>
 <p>This scheme generates 1482 novel and unique drug names. Which allows us to present each subject with a set of randomly generated drug names that will be entirely unique for each subject, and mostly not overlap with the sets of drug names assigned across subjects.</p>
 <p><strong>Design Decision:</strong> There are several ways to control the presentation of drug names. One random set could be generated and used for all subjects. A limited number of nonoverlapping sets could be generated and counterbalanced across subjects. A random set could be generated for each subject. My sense is that the set accomplishes the control we seek, and it is straightforward to implement. The downsides to random generation, which potentially could include added noise in the experiment, seem to outweigh the downsides to counterbalancing, which could include systematic bias from whatever idiosyncracies particular sets may have. So, I suppose for now, <strong>the decision is to randomize stimulus sets</strong> for each subject.</p>
 </div>
@@ -527,6 +546,21 @@ print(sample_drugs[1:20])</code></pre>
 <li><p>Currently, each time the experiment is knit, new drug names are randomly created and assigned to the ABC stimuli. This is done in R, not in js, and this would need to be changed (done in js) to keep full randomization for running online.</p></li>
 <li><p>The global order of the trials is fully randomized by jsPsych, and every subject should receive a random trial order whenever the html is reloaded.</p></li>
 <li><p>The order of inference questions is <strong>not yet randomized</strong>, mainly owing to the way I used jsPsych to achieve differing numbers of inference questions within each trial. I suppose my first step will be to implement randomization in R.</p></li>
+</ol>
+</div>
+<div id="to-do-list" class="section level2">
+<h2>to do list</h2>
+<ol style="list-style-type: decimal">
+<li>save locally <strong>done</strong></li>
+<li>end of experiment message <strong>done</strong></li>
+</ol>
+<ul>
+<li>Currently the debrief message requires 2 debrief calls to be added to the timeline, rather than 1. For some reason, the first debrief is skipped (or probably run automatically and not rendered) for some reason. In this situation, the data is not saved until after the debrief screen is responded to by a keyboard button press. It would be nicer to have the data save screen display a message.</li>
+<li>Solved, added the save data function to the debrief screen. Discovered that the finish trial function was redundant with setting trial duration to 0, which must have fired finish trial to complete the first debrief screen.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>randomize drug efficacy questions order</li>
+<li>timeout for slider answer…</li>
 </ol>
 </div>
 

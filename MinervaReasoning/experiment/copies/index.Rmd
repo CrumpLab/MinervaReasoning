@@ -76,29 +76,20 @@ sample_drugs <- sample(new_drugs, 22*3)
 # create dataframe to code and assign stimuli
 
 general_design <- data.frame(stringsAsFactors=FALSE,
-                       premise_one = c("A+", "A+", "A-", "A-", 
-                                       "AB+", "AB-", "AB+", "AB-", 
-                                       "A+","A-", "AB+", "AB-", "C+", "C-", 
-                                       "C+","C+", "C-", "C-", 
-                                       "AB+", "AB-", "AB+","AB-"),
-                       premise_two = c("AB+", "AB-", "AB+", "AB-", 
-                                       "A+", "A+", "A-", "A-", 
-                                       NA,NA, NA, NA, NA, NA, 
-                                       "AB+", "AB-", "AB+","AB-", 
-                                       "C+", "C+", "C-", "C-"),
-                     question_type = c("experimental", "experimental", "experimental",
+                       premise_one = c("A+", "A+", "A-", "A-", "AB+", "AB-", "AB+", "AB-", "A+",
+                                       "A-", "AB+", "AB-", "C+", "C-", "C+",
+                                       "C+", "C-", "C-", "AB+", "AB-", "AB+",
+                                       "AB-"),
+                       premise_two = c("AB+", "AB-", "AB+", "AB-", "A+", "A+", "A-", "A-", NA,
+                                       NA, NA, NA, NA, NA, "AB+", "AB-", "AB+",
+                                       "AB-", "C+", "C+", "C-", "C-"),
+                     Question_type = c("experimental", "experimental", "experimental",
                                        "experimental", "experimental",
                                        "experimental", "experimental", "experimental",
                                        "control", "control", "control", "control",
                                        "control", "control", "control",
                                        "control", "control", "control", "control",
-                                       "control", "control", "control"),
-                     overall_premise = c("A+AB+","A+AB-","A-AB+","A-AB-",
-                                         "A+AB+","A+AB-","A-AB+","A-AB-",
-                                         "A+","A-", "AB+", "AB-", "C+", "C-",
-                                         "C+AB+","C+AB-","C-AB+","C-AB-",
-                                         "C+AB+","C+AB-","C-AB+","C-AB-"
-                                         )
+                                       "control", "control", "control")
                   ) %>%
   mutate(drug_one = str_replace(premise_one,"[+-]",""),
          drug_two = str_replace(premise_two,"[+-]",""),
@@ -209,11 +200,7 @@ general_design <- general_design %>%
          q1 = NA,
          q2 = NA,
          q3 = NA,
-         q4 = NA,
-         q1_type = NA,
-         q2_type = NA,
-         q3_type = NA,
-         q4_type = NA)
+         q4 = NA)
 
 for(i in 1:dim(general_design)[1]){
   all_questions <- c(general_design$p1_question[[i]],general_design$p2_question[[i]])
@@ -221,30 +208,22 @@ for(i in 1:dim(general_design)[1]){
   all_questions <- unique(all_questions)
   general_design$all_questions[[i]] <- all_questions
   general_design$num_questions[i] <- length(all_questions)
-  rand_q_order <- sample(1:4)
-  general_design$q1[i] <- all_questions[rand_q_order[1]]
-  general_design$q2[i] <- all_questions[rand_q_order[2]]
-  general_design$q3[i] <- all_questions[rand_q_order[3]]
-  general_design$q4[i] <- all_questions[rand_q_order[4]]
-  general_design$q1_type[i] <- rand_q_order[1]
-  general_design$q2_type[i] <- rand_q_order[2]
-  general_design$q3_type[i] <- rand_q_order[3]
-  general_design$q4_type[i] <- rand_q_order[4]
-
+  general_design$q1[i] <- all_questions[1]
+  general_design$q2[i] <- all_questions[2]
+  general_design$q3[i] <- all_questions[3]
+  general_design$q4[i] <- all_questions[4]
 }
 
 general_design <- general_design %>%
   mutate(stimulus = paste(premise_one,premise_two,sep=","))
 
 library(xprmntr)
-stimulus_json <- stimulus_df_to_json(general_design[1:22,],
+stimulus_json <- stimulus_df_to_json(general_design[1:4,],
                        stimulus= "stimulus",
                        data = c("premise_one","premise_two",
-                                "question_type", "overall_premise",
                                 "p1_outcome","p2_outcome",
                                 "p1_sentence","p2_sentence",
-                                "q1","q2","q3","q4","trial_number",
-                                "q1_type","q2_type","q3_type","q4_type"))
+                                "q1","q2","q3","q4","trial_number"))
 
 
 # write json object to script
@@ -292,7 +271,7 @@ var face_name_procedure = {
               return html;
             },
             data: jsPsych.timelineVariable('data'),
-            trial_duration: 5000,
+            trial_duration: 4000,
             choices: jsPsych.NO_KEYS
         },
         {
@@ -321,7 +300,7 @@ var face_name_procedure = {
               }
             },
             on_finish: function(){
-             jsPsych.data.get().addToLast({question_order: 'q1'});
+             jsPsych.data.get().addToLast({question_number: 'q1'});
             }
         },
         {
@@ -350,7 +329,7 @@ var face_name_procedure = {
               }
             },
             on_finish: function(){
-             jsPsych.data.get().addToLast({question_order: 'q2'});
+             jsPsych.data.get().addToLast({question_number: 'q2'});
             }
         },
         {
@@ -379,7 +358,7 @@ var face_name_procedure = {
               }
             },
             on_finish: function(){
-             jsPsych.data.get().addToLast({question_order: 'q3'});
+             jsPsych.data.get().addToLast({question_number: 'q3'});
             }
         },
         {
@@ -408,7 +387,7 @@ var face_name_procedure = {
               }
             },
             on_finish: function(){
-             jsPsych.data.get().addToLast({question_order: 'q4'});
+             jsPsych.data.get().addToLast({question_number: 'q4'});
             }
         }
     ],
